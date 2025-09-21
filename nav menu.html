@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Scroll Colors</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      scroll-behavior: smooth;
+      transition: background 1s ease;
+      background: rgb(203, 247, 143);
+      color: #222; /* unified text color */
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(252, 142, 172, 0.95);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      padding: 19px 0;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      transition: background 0.5s ease;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 50px;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #3c1818;
+      font-size: 29px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      padding: 5px 10px;
+      border-radius: 10px;
+    }
+
+    nav ul li a:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.1);
+    }
+
+    nav ul li a.active {
+      border-bottom: 3px solid white;
+    }
+
+    /* Sections */
+    section {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 1s ease, transform 1s ease;
+      color: #222; /* consistent font color */
+    }
+
+    section.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    section h2 {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .tagline,
+    .service-list li,
+    #contact p,
+    #contact a {
+      font-size: 1.6rem;
+      color: #334a37; /* unified softer shade */
+    }
+
+    .service-list {
+      list-style: none;
+      margin-top: 20px;
+      line-height: 2;
+      padding: 0;
+    }
+
+    #contact a {
+      text-decoration: none;
+      color: #0066cc;
+    }
+
+    #contact a:hover {
+      text-decoration: underline;
+      color: #004080;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      nav ul {
+        gap: 20px;
+      }
+      nav ul li a {
+        font-size: 16px;
+      }
+      section h2 {
+        font-size: 1.5rem;
+      }
+      .tagline,
+      .service-list li,
+      #contact p,
+      #contact a {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Sections -->
+  <section id="home" class="show">
+    <h2>Home</h2>
+    <p class="tagline">Welcome to my creative space where design meets innovation.</p>
+    <p class="tagline">Scroll down and watch the magic unfold ✨</p>
+  </section>
+
+  <section id="about">
+    <h2>About Me</h2>
+    <p class="tagline">I’m passionate about building interactive, user-friendly websites that blend creativity with technology.</p>
+    <p class="tagline">This project is a showcase of dynamic design and smooth user experiences.</p>
+  </section>
+
+  <section id="services">
+    <h2>Services</h2>
+    <ul class="service-list">
+      <li>⚡ Responsive Web Design</li>
+      <li>🎨 Creative UI/UX Solutions</li>
+      <li>💻 Frontend & Backend Development</li>
+      <li>🚀 Performance Optimization</li>
+    </ul>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Let’s connect and create something amazing together!</p>
+    <p>Email: <a href="mailto:sonalisat2005@gmail.com">sonalisat2005@gmail.com</a></p>
+    <p>Follow me: 
+      <a href="https://www.linkedin.com/in/sonali-satapathy-410a062b2">💼 LinkedIn</a>
+    </p>
+  </section>
+
+  <script>
+    const colors = ["#ff7675", "#74b9ff", "#55efc4", "#ffeaa7", "#a29bfe", "#fd79a8", "#00cec9", "#fab1a0"];
+    let lastColor = "yellow";
+
+    function getNewColor() {
+      let newColor;
+      do {
+        newColor = colors[Math.floor(Math.random() * colors.length)];
+      } while (newColor === lastColor);
+      lastColor = newColor;
+      return newColor;
+    }
+
+    let lastScrollTop = 0;
+    window.addEventListener("scroll", () => {
+      let st = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (Math.abs(st - lastScrollTop) > 50) {
+        document.body.style.background = getNewColor();
+        lastScrollTop = st <= 0 ? 0 : st;
+      }
+
+      // Section fade-in
+      document.querySelectorAll("section").forEach(sec => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 100) {
+          sec.classList.add("show");
+        }
+      });
+
+      // Active nav link
+      document.querySelectorAll("section").forEach(sec => {
+        const top = sec.offsetTop - 80;
+        const bottom = top + sec.offsetHeight;
+        if (st >= top && st < bottom) {
+          document.querySelectorAll("nav a").forEach(a => a.classList.remove("active"));
+          document.querySelector(`nav a[href="#${sec.id}"]`).classList.add("active");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
